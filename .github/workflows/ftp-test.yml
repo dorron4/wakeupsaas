@@ -1,0 +1,22 @@
+name: Test FTP Directory Structure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-ftp:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install lftp
+      run: sudo apt-get install lftp
+      
+    - name: List FTP root directory
+      env:
+        FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+      run: |
+        lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER -e "ls; bye"
+        lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER -e "ls public_html; bye"
