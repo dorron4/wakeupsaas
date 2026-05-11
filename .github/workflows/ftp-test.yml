@@ -20,3 +20,5 @@ jobs:
       run: |
         lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER -e "ls; bye"
         lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER -e "ls public_html; bye"
+
+        lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER -e "ls; bye" > ftp_root.txt; lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER -e "ls public_html; bye" >> ftp_root.txt; git config --global user.name 'GitHub Action'; git config --global user.email 'action@github.com'; git add ftp_root.txt; git commit -m 'chore: add ftp root log'; git push
