@@ -1,0 +1,67 @@
+[
+  {
+    "filename": "un_paso_por_delante_de_wall_street.pdf",
+    "directory": "inversiones",
+    "data": {
+      "title": "Un Paso por Delante de Wall Street (Peter Lynch)",
+      "intro": "Lynch, uno de los inversores más exitosos de la historia, sostiene que el inversor particular tiene ventajas sobre los profesionales de Wall Street si sabe observar su propio entorno de consumo.",
+      "chapters": "1. Preparación para invertir: Conócete a ti mismo y tus prejuicios.\n2. Buscando ganadores: La importancia de observar productos cotidianos exitosos.\n3. Los 6 tipos de empresas: De crecimiento lento a situaciones de recuperación.\n4. Qué evitar: Los 'próximos algo' y las empresas con demasiada deuda.\n5. El diseño de la cartera: Cuánto diversificar y cuándo vender.",
+      "conclusions": "No es necesario ser un experto en finanzas para ganar en bolsa. Si entiendes el negocio de una empresa y ves que sus productos son excelentes en el día a día, tienes una ventaja competitiva real.",
+      "wake_up_advice": "Aplica la 'Observación de Lynch' en Wake Up. Observa qué servicios están demandando tus vecinos o qué problemas de limpieza ves en las oficinas locales. Invierte tu tiempo y dinero de Wake Up en aquello que el mercado grita que necesita.",
+      "action_plan": "1. Auditoría de Entorno: Haz una lista de 5 negocios locales que siempre estén llenos y analiza por qué.\n2. Inversión en Vigilancia: Dedica 30 min a leer noticias del sector servicios en tu país.\n3. Selección de Nicho: Elige un sub-servicio de Wake Up que creas que va a explotar en demanda este año.",
+      "kpis": "1. Rentabilidad de las inversiones realizadas.\n2. Precisión en la detección de nuevas demandas del mercado.\n3. Calidad del análisis fundamental previo a invertir."
+    }
+  },
+  {
+    "filename": "organizate_con_eficacia_.pdf",
+    "directory": "gestion_tiempo",
+    "data": {
+      "title": "Organízate con Eficacia - GTD (David Allen)",
+      "intro": "El sistema Getting Things Done (GTD) es la biblia de la productividad personal. Se basa en vaciar la mente de compromisos y procesarlos en un sistema externo confiable para liberar la creatividad.",
+      "chapters": "1. El Arte del Control: Los 5 pasos del flujo de trabajo.\n2. Recopilar: Capturar todo lo que atrae tu atención.\n3. Procesar: ¿Qué es esto? ¿Tiene acción?\n4. Organizar: Listas de proyectos, acciones próximas y archivos.\n5. Revisar y Hacer: Mantener el sistema al día y elegir con inteligencia.",
+      "conclusions": "Tu mente es para tener ideas, no para guardarlas. Si logras que tu sistema gestione las tareas, tu cerebro podrá enfocarse en ejecutar con una claridad total.",
+      "wake_up_advice": "Usa el portal de Wake Up como tu 'sistema GTD'. Registra cada lead, cada tarea de limpieza y cada formación en las herramientas del portal. No intentes recordarlo todo; deja que el portal lo guarde por ti para que tú puedas liderar sin estrés.",
+      "action_plan": "1. Barrido Mental: Escribe hoy TODO lo que tienes pendiente en Wake Up en una lista única.\n2. Regla de los 2 Minutos: Si una tarea de Wake Up toma menos de 2 min, hazla YA, no la anotes.\n3. Revisión Semanal: Bloquea 1 hora el domingo para organizar tu semana en el portal.",
+      "kpis": "1. Número de tareas 'vencidas' en tu lista.\n2. Sensación de claridad y falta de estrés (0-10).\n3. Eficiencia en el cierre de proyectos abiertos."
+    }
+  },
+  {
+    "filename": "traguese_ese_sapo_.pdf",
+    "directory": "gestion_tiempo",
+    "data": {
+      "title": "Tráguese ese Sapo (Brian Tracy)",
+      "intro": "Tracy ofrece 21 estrategias para dejar de postergar y hacer más en menos tiempo. El 'sapo' es la tarea más importante y difícil que tienes pendiente, y la regla es: si tienes que tragarte un sapo, hazlo a primera hora.",
+      "chapters": "1. Pon la mesa: Claridad absoluta en tus metas.\n2. Planifica el día con antelación.\n3. Aplica la Ley de Pareto (80/20).\n4. Considera las consecuencias: Enfócate en lo que tiene mayor impacto a largo plazo.\n5. Practica el Método ABCDE para priorizar.",
+      "conclusions": "La clave del éxito no es hacer muchas cosas, sino hacer las cosas correctas. La habilidad de elegir la tarea más valiosa y concentrarte en ella hasta terminarla es la marca del alto rendimiento.",
+      "wake_up_advice": "En Wake Up, tu 'sapo' suele ser la prospección en frío o la gestión de una queja difícil. No lo dejes para el final del día. Entra en el portal y haz esa llamada a las 9:00 AM. Una vez tragado el sapo, el resto del día será coser y cantar.",
+      "action_plan": "1. El Sapo del Día: Identifica hoy cuál es la tarea de Wake Up que más pereza te da y hazla ANTES que cualquier otra cosa.\n2. Lista de Impacto: Elige las 3 tareas que más dinero o valor aportan a tu negocio.\n3. Gestión de la Dilación: Cuando sientas ganas de postergar, cuenta hasta 5 y empieza la tarea.",
+      "kpis": "1. Tareas críticas completadas antes de las 11:00 AM.\n2. Reducción en la acumulación de pendientes importantes.\n3. Incremento en la productividad percibida."
+    }
+  },
+  {
+    "filename": "los_7_habitos_de_la_gente_altamente_efectiva.pdf",
+    "directory": "gestion_tiempo",
+    "data": {
+      "title": "Los 7 Hábitos de la Gente Altamente Efectiva (Stephen Covey)",
+      "intro": "Covey presenta un enfoque basado en principios para la efectividad personal e interpersonal. Los hábitos nos llevan de la dependencia a la independencia, y de ahí a la interdependencia.",
+      "chapters": "1. Sea Proactivo: Tienes la libertad de elegir tu respuesta.\n2. Empiece con un fin en mente: Visión de largo plazo.\n3. Primero lo Primero: Gestión de prioridades basada en valores.\n4. Piense en Ganar-Ganar: Buscar el beneficio mutuo.\n5. Comprender para ser comprendido: Empatía profunda.\n6. Sinergia: El todo es más que la suma de las partes.\n7. Afilar la Sierra: Renovación física, mental, social y espiritual.",
+      "conclusions": "La efectividad es un equilibrio entre la producción y la capacidad de producción. Si no cuidas tus principios y tus relaciones, el éxito a largo plazo es imposible.",
+      "wake_up_advice": "Usa el Hábito 3 en Wake Up: no dejes que lo urgente (un mensaje de WhatsApp) te quite tiempo de lo importante (formación estratégica). Aplica el Hábito 4 con tus colaboradores: que ellos ganen dinero mientras tú creces.",
+      "action_plan": "1. Enunciado de Misión Personal: Escribe por qué estás en Wake Up y qué legado quieres dejar.\n2. Cuadrante de Covey: Clasifica tus tareas de Wake Up hoy entre Urgentes e Importantes.\n3. Escucha Empática: En tu próxima venta, no hables de tus servicios hasta que hayas entendido perfectamente el dolor del cliente.",
+      "kpis": "1. Tiempo dedicado al Cuadrante II (Lo Importante pero No Urgente).\n2. Nivel de sinergia y colaboración en tu equipo.\n3. Frecuencia de actividades de 'Afilar la Sierra'."
+    }
+  },
+  {
+    "filename": "mananas_milagrosas.pdf",
+    "directory": "gestion_tiempo",
+    "data": {
+      "title": "Mañanas Milagrosas (Hal Elrod)",
+      "intro": "Elrod propone el método S.A.V.E.R.S. para transformar tu vida despertándote una hora antes y dedicándola a tu desarrollo personal. Sostiene que tu nivel de éxito raramente superará tu nivel de desarrollo personal.",
+      "chapters": "1. El Despertar: Por qué cómo empiezas el día determina cómo lo terminas.\n2. Silencio: Meditación o respiración profunda.\n3. Afirmaciones: Reprogramar tu éxito.\n4. Visualización: Ver tu día perfecto.\n5. Ejercicio y Lectura: Energía física y mental.\n6. Escritura: Claridad a través de un diario.",
+      "conclusions": "Ganar la mañana es ganar el día. Si inviertes en ti mismo antes de que el mundo empiece a pedirte cosas, serás una persona mucho más capaz de manejar cualquier reto.",
+      "wake_up_advice": "Implementa tus 'Mañanas Milagrosas de Wake Up'. Dedica 10 min de lectura de la biblioteca del portal y 10 min de visualización de tus metas antes de abrir el correo. Esto te dará una ventaja competitiva de claridad sobre cualquier otro vendedor.",
+      "action_plan": "1. Despertador Anticipado: Pon la alarma 30 min antes mañana.\n2. Rutina SAVERS: Elige 2 pasos del método y aplícalos mañana mismo enfocados en tu éxito en Wake Up.\n3. Diario de Éxito: Escribe 3 cosas por las que estés agradecido en tu negocio actual.",
+      "kpis": "1. Consistencia en la rutina matutina.\n2. Nivel de concentración durante el día.\n3. Progreso en el desarrollo personal autoevaluado."
+    }
+  }
+]
