@@ -22,6 +22,6 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: './FORMACIONES WAKE UP/'
-        server-dir: './domains/aitordorronsoro.es/public_html/formaciones/'
+        server-dir: './formaciones/'
         protocol: ftp
         port: 21
