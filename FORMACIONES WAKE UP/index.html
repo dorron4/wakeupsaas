@@ -23,12 +23,12 @@
             <div class="login-header">
                 <i class='bx bxs-graduation login-logo'></i>
                 <h1>Acceso Formación</h1>
-                <p>Ingresa para comenzar tu desarrollo</p>
+                <p>Ingresa con tu ID de acceso</p>
             </div>
             <form id="login-form">
                 <div class="input-group">
-                    <i class='bx bx-user'></i>
-                    <input type="text" id="username" placeholder="Usuario o ID de Distribuidor" required>
+                    <i class='bx bx-id-card'></i>
+                    <input type="text" id="username" placeholder="ID de Acceso" required>
                 </div>
                 <div class="input-group">
                     <i class='bx bx-lock-alt'></i>
@@ -41,12 +41,37 @@
                 <span>o accede con</span>
             </div>
 
+            <!-- Google Login - verifica email en base de datos -->
+            <div id="google-email-container" class="hidden" style="margin-bottom: 10px;">
+                <div class="input-group">
+                    <i class='bx bx-envelope'></i>
+                    <input type="email" id="google-email-input" placeholder="Tu correo registrado" required>
+                </div>
+                <button id="google-email-submit" class="btn-primary" style="margin-top: 8px; width: 100%; background: linear-gradient(135deg, #4285f4, #34a853);">Verificar y Acceder <i class='bx bx-check'></i></button>
+                <button id="google-email-cancel" style="margin-top: 6px; width: 100%; padding: 10px; background: transparent; border: 1px solid #dfe1e6; border-radius: 8px; cursor: pointer; color: #5e6c84; font-size: 0.85rem;">Cancelar</button>
+            </div>
+
             <button id="google-login-btn" class="btn-google">
-                <i class='bx bxl-google'></i> Google
+                <i class='bx bxl-google'></i> Acceder con Google
             </button>
 
+            <div class="login-divider" style="margin-top: 10px;">
+                <span>¿No tienes acceso?</span>
+            </div>
+
+            <button id="btn-solicitar-acceso" onclick="showReferralInfo()" class="btn-google" style="border-color: #3b82f6; color: #1e3a8a; margin-top: 0;">
+                <i class='bx bx-user-plus' style="color: #3b82f6;"></i> Solicitar Acceso
+            </button>
+
+            <!-- Modal inline para mostrar link de referido -->
+            <div id="referral-info-box" class="hidden" style="margin-top: 12px; padding: 16px; background: linear-gradient(135deg, #eff6ff, #dbeafe); border-radius: 12px; border: 1px solid #bfdbfe; text-align: center;">
+                <p style="color: #1e3a8a; font-size: 0.9rem; font-weight: 600; margin-bottom: 10px;"><i class='bx bx-link'></i> Usa este enlace para registrarte:</p>
+                <input type="text" id="referral-link-display" readonly style="width: 100%; padding: 10px; border: 2px solid #93c5fd; border-radius: 8px; text-align: center; font-size: 0.85rem; color: #1e40af; background: white; font-weight: 600; cursor: pointer;" onclick="this.select(); document.execCommand('copy'); alert('¡Enlace copiado!');">
+                <p style="color: #64748b; font-size: 0.78rem; margin-top: 8px;">Copia el enlace y ábrelo en tu navegador para solicitar acceso.</p>
+            </div>
+
             <div class="login-footer">
-                <p>Acceso exclusivo para distribuidores.</p>
+                <p>Acceso exclusivo para distribuidores autorizados.</p>
             </div>
         </div>
         <!-- Background shapes for premium feel -->
@@ -120,8 +145,8 @@
             </div>
 
             <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="avatar"><i class='bx bx-user'></i></div>
+                <div class="user-info" onclick="openUserProfile()" style="cursor: pointer; transition: opacity 0.3s;" onmouseover="this.style.opacity=0.7" onmouseout="this.style.opacity=1" title="Ver mi perfil">
+                    <div class="avatar" style="overflow: hidden; position: relative;"><i id="sidebar-avatar-icon" class='bx bx-user'></i><img id="sidebar-avatar-img" src="" style="width: 100%; height: 100%; object-fit: cover; display: none; position: absolute; top: 0; left: 0;"></div>
                     <span id="display-username">Distribuidor</span>
                 </div>
                 <button id="logout-btn" class="btn-icon"><i class='bx bx-log-out'></i></button>
@@ -132,6 +157,7 @@
         <main class="main-content">
             <header class="top-header">
                 <h2 id="section-title">Bienvenida</h2>
+                <button id="btn-admin-panel" onclick="openAdminLogin()" class="btn-primary" style="margin-left: auto; display:flex; align-items:center; gap:8px; font-weight:bold; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); background: linear-gradient(135deg, #1e3a8a, #3b82f6);"><i class='bx bx-shield-quarter'></i> Acceso Administrador</button>
             </header>
 
             <div class="content-wrapper">
@@ -197,6 +223,21 @@
                                         <i class='bx bxl-paypal'></i> PayPal
                                     </a>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Bandeja de Entrada -->
+                    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <div class="module-card glass-effect" style="display: flex; align-items: center; cursor: pointer; position: relative; padding: 25px; transition: transform 0.3s; border-left: 5px solid #eb5a46;" onclick="openInbox()" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='none'">
+                            <div style="font-size: 3.5rem; color: #eb5a46; position: relative; display: flex;">
+                                <i class='bx bx-envelope'></i>
+                                <span id="inbox-badge" class="hidden" style="position: absolute; top: -5px; right: -5px; background: #e11d48; color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">0</span>
+                            </div>
+                            <div style="margin-left: 20px;">
+                                <h3 style="margin: 0; color: var(--primary-blue); font-size: 1.4rem;">Bandeja de Mensajes</h3>
+                                <p style="margin: 5px 0 0; font-size: 0.95rem; color: #5e6c84;">Avisos importantes del administrador</p>
                             </div>
                         </div>
                     </div>
@@ -3321,13 +3362,269 @@
                     <div class="module-card glass-effect mb-3">
                         <div class="module-header" style="margin-bottom: 20px;">
                             <h3 style="color: var(--primary-blue); font-size: 1.6rem;"><i class='bx bx-folder-open'></i> Documentación Adicional Importante</h3>
-                            <p style="font-size: 0.95rem; color: var(--text-secondary);">Recursos y documentos de especial relevancia para la actividad.</p>
+                            <p style="font-size: 0.95rem; color: var(--text-secondary);">Recursos y documentos de especial relevancia para la actividad. Selecciona una categoría.</p>
                         </div>
-                        
-                        <!-- Aquí se irán añadiendo los documentos importantes -->
+                        <div class="folder-grid">
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('di-legalidad', 'Legalidad y Fiscalidad');">
+                                <div class="folder-card-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">⚖️</div>
+                                <div class="folder-card-title">LEGALIDAD Y FISCALIDAD</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('di-presentaciones', 'Presentaciones Negocio');">
+                                <div class="folder-card-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">📊</div>
+                                <div class="folder-card-title">PRESENTACIONES NEGOCIO</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('di-servicios', 'Servicios');">
+                                <div class="folder-card-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">🔧</div>
+                                <div class="folder-card-title">SERVICIOS</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('di-plan-pagos', 'Plan de Pagos');">
+                                <div class="folder-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">💳</div>
+                                <div class="folder-card-title">PLAN DE PAGOS</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('di-testimonios', 'Testimonios');">
+                                <div class="folder-card-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">⭐</div>
+                                <div class="folder-card-title">TESTIMONIOS</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('di-eventos', 'Eventos');">
+                                <div class="folder-card-icon" style="background: rgba(6, 182, 212, 0.1); color: #06b6d4;">🎤</div>
+                                <div class="folder-card-title">EVENTOS</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('di-videos', 'Videos Promocionales');">
+                                <div class="folder-card-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">🎬</div>
+                                <div class="folder-card-title">VIDEOS PROMOCIONALES</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SUBSECCIONES DE DOCUMENTACIÓN ADICIONAL IMPORTANTE -->
+
+                <section id="di-legalidad" class="content-section hidden">
+                    <div style="margin-bottom: 15px;">
+                        <button class="btn-back" onclick="if(window.switchSection) window.switchSection('documentacion-importante', 'Documentación Adicional Importante');">
+                            <i class='bx bx-chevron-left'></i> Volver a Documentación
+                        </button>
+                    </div>
+                    <div class="module-card glass-effect mb-3">
+                        <div class="module-header" style="margin-bottom: 20px;">
+                            <h3 style="color: #10b981; font-size: 1.5rem;"><i class='bx bx-shield-quarter'></i> Legalidad y Fiscalidad</h3>
+                            <p style="font-size: 0.95rem; color: var(--text-secondary);">Documentación legal y fiscal relevante para la actividad. Selecciona una categoría.</p>
+                        </div>
+                        <div class="folder-grid">
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('leg-modelo036', 'Modelo 036 Hacienda');">
+                                <div class="folder-card-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">📄</div>
+                                <div class="folder-card-title">MODELO 036 HACIENDA</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('leg-alta-autonomos', 'Alta Autónomos');">
+                                <div class="folder-card-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">👤</div>
+                                <div class="folder-card-title">ALTA AUTÓNOMOS</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('leg-boe', 'BOE');">
+                                <div class="folder-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">📰</div>
+                                <div class="folder-card-title">BOE</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('leg-contrato', 'Contrato Mercantil');">
+                                <div class="folder-card-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">📝</div>
+                                <div class="folder-card-title">CONTRATO MERCANTIL</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('leg-privacidad', 'Política Privacidad Datos');">
+                                <div class="folder-card-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">🔒</div>
+                                <div class="folder-card-title">POLÍTICA PRIVACIDAD DATOS</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('leg-avd', 'AVD');">
+                                <div class="folder-card-icon" style="background: rgba(6, 182, 212, 0.1); color: #06b6d4;">🛡️</div>
+                                <div class="folder-card-title">AVD</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('leg-registro', 'Registro Mercantil');">
+                                <div class="folder-card-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">🏛️</div>
+                                <div class="folder-card-title">REGISTRO MERCANTIL</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('leg-contacto', 'Contacto Wake Up');">
+                                <div class="folder-card-icon" style="background: rgba(34, 197, 94, 0.1); color: #22c55e;">📞</div>
+                                <div class="folder-card-title">CONTACTO WAKE UP</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('leg-cuota', 'Cuota Mensual Ejemplo');">
+                                <div class="folder-card-icon" style="background: rgba(249, 115, 22, 0.1); color: #f97316;">💶</div>
+                                <div class="folder-card-title">CUOTA MENSUAL EJEMPLO</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('leg-factura', 'Ejemplo Factura Ingreso');">
+                                <div class="folder-card-icon" style="background: rgba(168, 85, 247, 0.1); color: #a855f7;">🧾</div>
+                                <div class="folder-card-title">EJEMPLO FACTURA INGRESO</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SUBSECCIONES DE LEGALIDAD Y FISCALIDAD -->
+                <section id="leg-modelo036" class="content-section hidden">
+                    <div style="margin-bottom: 15px;"><button class="btn-back" onclick="if(window.switchSection) window.switchSection('di-legalidad', 'Legalidad y Fiscalidad');"><i class='bx bx-chevron-left'></i> Volver a Legalidad</button></div>
+                    <div class="module-card glass-effect mb-3"><div class="module-header" style="margin-bottom: 20px;"><h3 style="color: #10b981; font-size: 1.5rem;"><i class='bx bx-file'></i> Modelo 036 Hacienda</h3><p style="font-size: 0.95rem; color: var(--text-secondary);">Documentación del Modelo 036 para la declaración censal en Hacienda.</p></div><div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #10b981;"></i><p>El contenido se añadirá aquí.</p></div></div>
+                </section>
+                <section id="leg-alta-autonomos" class="content-section hidden">
+                    <div style="margin-bottom: 15px;"><button class="btn-back" onclick="if(window.switchSection) window.switchSection('di-legalidad', 'Legalidad y Fiscalidad');"><i class='bx bx-chevron-left'></i> Volver a Legalidad</button></div>
+                    <div class="module-card glass-effect mb-3"><div class="module-header" style="margin-bottom: 20px;"><h3 style="color: #3b82f6; font-size: 1.5rem;"><i class='bx bx-user-check'></i> Alta Autónomos</h3><p style="font-size: 0.95rem; color: var(--text-secondary);">Información y guía para el alta como autónomo.</p></div><div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #3b82f6;"></i><p>El contenido se añadirá aquí.</p></div></div>
+                </section>
+                <section id="leg-boe" class="content-section hidden">
+                    <div style="margin-bottom: 15px;"><button class="btn-back" onclick="if(window.switchSection) window.switchSection('di-legalidad', 'Legalidad y Fiscalidad');"><i class='bx bx-chevron-left'></i> Volver a Legalidad</button></div>
+                    <div class="module-card glass-effect mb-3"><div class="module-header" style="margin-bottom: 20px;"><h3 style="color: #8b5cf6; font-size: 1.5rem;"><i class='bx bx-news'></i> BOE</h3><p style="font-size: 0.95rem; color: var(--text-secondary);">Publicaciones relevantes del Boletín Oficial del Estado.</p></div><div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #8b5cf6;"></i><p>El contenido se añadirá aquí.</p></div></div>
+                </section>
+                <section id="leg-contrato" class="content-section hidden">
+                    <div style="margin-bottom: 15px;"><button class="btn-back" onclick="if(window.switchSection) window.switchSection('di-legalidad', 'Legalidad y Fiscalidad');"><i class='bx bx-chevron-left'></i> Volver a Legalidad</button></div>
+                    <div class="module-card glass-effect mb-3"><div class="module-header" style="margin-bottom: 20px;"><h3 style="color: #f59e0b; font-size: 1.5rem;"><i class='bx bx-edit'></i> Contrato Mercantil</h3><p style="font-size: 0.95rem; color: var(--text-secondary);">Modelo de contrato mercantil para distribuidores.</p></div><div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #f59e0b;"></i><p>El contenido se añadirá aquí.</p></div></div>
+                </section>
+                <section id="leg-privacidad" class="content-section hidden">
+                    <div style="margin-bottom: 15px;"><button class="btn-back" onclick="if(window.switchSection) window.switchSection('di-legalidad', 'Legalidad y Fiscalidad');"><i class='bx bx-chevron-left'></i> Volver a Legalidad</button></div>
+                    <div class="module-card glass-effect mb-3"><div class="module-header" style="margin-bottom: 20px;"><h3 style="color: #ef4444; font-size: 1.5rem;"><i class='bx bx-lock-alt'></i> Política Privacidad Datos</h3><p style="font-size: 0.95rem; color: var(--text-secondary);">Política de privacidad y protección de datos personales.</p></div><div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #ef4444;"></i><p>El contenido se añadirá aquí.</p></div></div>
+                </section>
+                <section id="leg-avd" class="content-section hidden">
+                    <div style="margin-bottom: 15px;"><button class="btn-back" onclick="if(window.switchSection) window.switchSection('di-legalidad', 'Legalidad y Fiscalidad');"><i class='bx bx-chevron-left'></i> Volver a Legalidad</button></div>
+                    <div class="module-card glass-effect mb-3"><div class="module-header" style="margin-bottom: 20px;"><h3 style="color: #06b6d4; font-size: 1.5rem;"><i class='bx bx-shield'></i> AVD</h3><p style="font-size: 0.95rem; color: var(--text-secondary);">Documentación AVD relevante para la actividad.</p></div><div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #06b6d4;"></i><p>El contenido se añadirá aquí.</p></div></div>
+                </section>
+                <section id="leg-registro" class="content-section hidden">
+                    <div style="margin-bottom: 15px;"><button class="btn-back" onclick="if(window.switchSection) window.switchSection('di-legalidad', 'Legalidad y Fiscalidad');"><i class='bx bx-chevron-left'></i> Volver a Legalidad</button></div>
+                    <div class="module-card glass-effect mb-3"><div class="module-header" style="margin-bottom: 20px;"><h3 style="color: #ec4899; font-size: 1.5rem;"><i class='bx bx-buildings'></i> Registro Mercantil</h3><p style="font-size: 0.95rem; color: var(--text-secondary);">Información sobre el registro mercantil de la empresa.</p></div><div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #ec4899;"></i><p>El contenido se añadirá aquí.</p></div></div>
+                </section>
+                <section id="leg-contacto" class="content-section hidden">
+                    <div style="margin-bottom: 15px;"><button class="btn-back" onclick="if(window.switchSection) window.switchSection('di-legalidad', 'Legalidad y Fiscalidad');"><i class='bx bx-chevron-left'></i> Volver a Legalidad</button></div>
+                    <div class="module-card glass-effect mb-3"><div class="module-header" style="margin-bottom: 20px;"><h3 style="color: #22c55e; font-size: 1.5rem;"><i class='bx bx-phone'></i> Contacto Wake Up</h3><p style="font-size: 0.95rem; color: var(--text-secondary);">Datos de contacto oficiales de Wake Up.</p></div><div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #22c55e;"></i><p>El contenido se añadirá aquí.</p></div></div>
+                </section>
+                <section id="leg-cuota" class="content-section hidden">
+                    <div style="margin-bottom: 15px;"><button class="btn-back" onclick="if(window.switchSection) window.switchSection('di-legalidad', 'Legalidad y Fiscalidad');"><i class='bx bx-chevron-left'></i> Volver a Legalidad</button></div>
+                    <div class="module-card glass-effect mb-3"><div class="module-header" style="margin-bottom: 20px;"><h3 style="color: #f97316; font-size: 1.5rem;"><i class='bx bx-euro'></i> Cuota Mensual Ejemplo</h3><p style="font-size: 0.95rem; color: var(--text-secondary);">Ejemplo de cuota mensual y desglose de costes.</p></div><div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #f97316;"></i><p>El contenido se añadirá aquí.</p></div></div>
+                </section>
+                <section id="leg-factura" class="content-section hidden">
+                    <div style="margin-bottom: 15px;"><button class="btn-back" onclick="if(window.switchSection) window.switchSection('di-legalidad', 'Legalidad y Fiscalidad');"><i class='bx bx-chevron-left'></i> Volver a Legalidad</button></div>
+                    <div class="module-card glass-effect mb-3"><div class="module-header" style="margin-bottom: 20px;"><h3 style="color: #a855f7; font-size: 1.5rem;"><i class='bx bx-receipt'></i> Ejemplo Factura Ingreso</h3><p style="font-size: 0.95rem; color: var(--text-secondary);">Ejemplo de factura de ingreso para distribuidores.</p></div><div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #a855f7;"></i><p>El contenido se añadirá aquí.</p></div></div>
+                </section>
+
+                <section id="di-presentaciones" class="content-section hidden">
+                    <div style="margin-bottom: 15px;">
+                        <button class="btn-back" onclick="if(window.switchSection) window.switchSection('documentacion-importante', 'Documentación Adicional Importante');">
+                            <i class='bx bx-chevron-left'></i> Volver a Documentación
+                        </button>
+                    </div>
+                    <div class="module-card glass-effect mb-3">
+                        <div class="module-header" style="margin-bottom: 20px;">
+                            <h3 style="color: #3b82f6; font-size: 1.5rem;"><i class='bx bx-slideshow'></i> Presentaciones Negocio</h3>
+                            <p style="font-size: 0.95rem; color: var(--text-secondary);">Presentaciones y materiales de apoyo para el negocio.</p>
+                        </div>
                         <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
-                            <i class='bx bx-info-circle' style="font-size: 3rem; margin-bottom: 10px; color: var(--primary-blue-light);"></i>
-                            <p>El contenido de documentación importante se mostrará aquí.</p>
+                            <i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #3b82f6;"></i>
+                            <p>Las presentaciones de negocio se añadirán aquí.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="di-servicios" class="content-section hidden">
+                    <div style="margin-bottom: 15px;">
+                        <button class="btn-back" onclick="if(window.switchSection) window.switchSection('documentacion-importante', 'Documentación Adicional Importante');">
+                            <i class='bx bx-chevron-left'></i> Volver a Documentación
+                        </button>
+                    </div>
+                    <div class="module-card glass-effect mb-3">
+                        <div class="module-header" style="margin-bottom: 20px;">
+                            <h3 style="color: #f59e0b; font-size: 1.5rem;"><i class='bx bx-wrench'></i> Servicios</h3>
+                            <p style="font-size: 0.95rem; color: var(--text-secondary);">Documentación sobre los servicios disponibles. Selecciona una categoría.</p>
+                        </div>
+                        <div class="folder-grid">
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('srv-tramitacion-docs', 'Documentación para Tramitación');">
+                                <div class="folder-card-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">📋</div>
+                                <div class="folder-card-title">DOCUMENTACIÓN PARA TRAMITACIÓN</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('srv-procesos', 'Procesos de Tramitación');">
+                                <div class="folder-card-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">⚙️</div>
+                                <div class="folder-card-title">PROCESOS DE TRAMITACIÓN</div>
+                            </div>
+                            <div class="folder-card" onclick="if(window.switchSection) window.switchSection('srv-precios', 'Precios Servicios');">
+                                <div class="folder-card-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">💰</div>
+                                <div class="folder-card-title">PRECIOS SERVICIOS</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SUBSECCIONES DE SERVICIOS -->
+                <section id="srv-tramitacion-docs" class="content-section hidden">
+                    <div style="margin-bottom: 15px;"><button class="btn-back" onclick="if(window.switchSection) window.switchSection('di-servicios', 'Servicios');"><i class='bx bx-chevron-left'></i> Volver a Servicios</button></div>
+                    <div class="module-card glass-effect mb-3"><div class="module-header" style="margin-bottom: 20px;"><h3 style="color: #f59e0b; font-size: 1.5rem;"><i class='bx bx-clipboard'></i> Documentación para Tramitación</h3><p style="font-size: 0.95rem; color: var(--text-secondary);">Documentos necesarios para la tramitación de servicios.</p></div><div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #f59e0b;"></i><p>El contenido se añadirá aquí.</p></div></div>
+                </section>
+                <section id="srv-procesos" class="content-section hidden">
+                    <div style="margin-bottom: 15px;"><button class="btn-back" onclick="if(window.switchSection) window.switchSection('di-servicios', 'Servicios');"><i class='bx bx-chevron-left'></i> Volver a Servicios</button></div>
+                    <div class="module-card glass-effect mb-3"><div class="module-header" style="margin-bottom: 20px;"><h3 style="color: #3b82f6; font-size: 1.5rem;"><i class='bx bx-cog'></i> Procesos de Tramitación</h3><p style="font-size: 0.95rem; color: var(--text-secondary);">Guías y procesos paso a paso para tramitaciones.</p></div><div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #3b82f6;"></i><p>El contenido se añadirá aquí.</p></div></div>
+                </section>
+                <section id="srv-precios" class="content-section hidden">
+                    <div style="margin-bottom: 15px;"><button class="btn-back" onclick="if(window.switchSection) window.switchSection('di-servicios', 'Servicios');"><i class='bx bx-chevron-left'></i> Volver a Servicios</button></div>
+                    <div class="module-card glass-effect mb-3"><div class="module-header" style="margin-bottom: 20px;"><h3 style="color: #10b981; font-size: 1.5rem;"><i class='bx bx-dollar-circle'></i> Precios Servicios</h3><p style="font-size: 0.95rem; color: var(--text-secondary);">Tarifas y precios de los servicios disponibles.</p></div><div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #10b981;"></i><p>El contenido se añadirá aquí.</p></div></div>
+                </section>
+
+                <section id="di-plan-pagos" class="content-section hidden">
+                    <div style="margin-bottom: 15px;">
+                        <button class="btn-back" onclick="if(window.switchSection) window.switchSection('documentacion-importante', 'Documentación Adicional Importante');">
+                            <i class='bx bx-chevron-left'></i> Volver a Documentación
+                        </button>
+                    </div>
+                    <div class="module-card glass-effect mb-3">
+                        <div class="module-header" style="margin-bottom: 20px;">
+                            <h3 style="color: #8b5cf6; font-size: 1.5rem;"><i class='bx bx-credit-card'></i> Plan de Pagos</h3>
+                            <p style="font-size: 0.95rem; color: var(--text-secondary);">Información sobre los planes de pagos y compensación.</p>
+                        </div>
+                        <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            <i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #8b5cf6;"></i>
+                            <p>La documentación del plan de pagos se añadirá aquí.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="di-testimonios" class="content-section hidden">
+                    <div style="margin-bottom: 15px;">
+                        <button class="btn-back" onclick="if(window.switchSection) window.switchSection('documentacion-importante', 'Documentación Adicional Importante');">
+                            <i class='bx bx-chevron-left'></i> Volver a Documentación
+                        </button>
+                    </div>
+                    <div class="module-card glass-effect mb-3">
+                        <div class="module-header" style="margin-bottom: 20px;">
+                            <h3 style="color: #ef4444; font-size: 1.5rem;"><i class='bx bx-star'></i> Testimonios</h3>
+                            <p style="font-size: 0.95rem; color: var(--text-secondary);">Testimonios y casos de éxito de distribuidores.</p>
+                        </div>
+                        <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            <i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #ef4444;"></i>
+                            <p>Los testimonios se añadirán aquí.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="di-eventos" class="content-section hidden">
+                    <div style="margin-bottom: 15px;">
+                        <button class="btn-back" onclick="if(window.switchSection) window.switchSection('documentacion-importante', 'Documentación Adicional Importante');">
+                            <i class='bx bx-chevron-left'></i> Volver a Documentación
+                        </button>
+                    </div>
+                    <div class="module-card glass-effect mb-3">
+                        <div class="module-header" style="margin-bottom: 20px;">
+                            <h3 style="color: #06b6d4; font-size: 1.5rem;"><i class='bx bx-calendar-event'></i> Eventos</h3>
+                            <p style="font-size: 0.95rem; color: var(--text-secondary);">Información sobre eventos, conferencias y formaciones presenciales.</p>
+                        </div>
+                        <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            <i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #06b6d4;"></i>
+                            <p>Los eventos se añadirán aquí.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="di-videos" class="content-section hidden">
+                    <div style="margin-bottom: 15px;">
+                        <button class="btn-back" onclick="if(window.switchSection) window.switchSection('documentacion-importante', 'Documentación Adicional Importante');">
+                            <i class='bx bx-chevron-left'></i> Volver a Documentación
+                        </button>
+                    </div>
+                    <div class="module-card glass-effect mb-3">
+                        <div class="module-header" style="margin-bottom: 20px;">
+                            <h3 style="color: #ec4899; font-size: 1.5rem;"><i class='bx bx-video'></i> Videos Promocionales</h3>
+                            <p style="font-size: 0.95rem; color: var(--text-secondary);">Videos de promoción y marketing para compartir.</p>
+                        </div>
+                        <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            <i class='bx bx-folder-plus' style="font-size: 3rem; margin-bottom: 10px; color: #ec4899;"></i>
+                            <p>Los videos promocionales se añadirán aquí.</p>
                         </div>
                     </div>
                 </section>
@@ -3462,7 +3759,11 @@
                     </div>
                     <div class="module-card glass-effect mb-3">
                         <h3>🚀 Asistente: Arranque, Empresa y Plan de Pagos</h3>
-                        <p style="color:var(--text-secondary); padding: 20px; text-align: center;">Asistente especializado en Arranque Inicial próximamente disponible.</p>
+                        <div style="text-align: center; padding: 30px;">
+                            <a href="https://chatgpt.com/g/g-69e40c8022448191ba407f2f46fddc9f-asistente-virtual-wake-up-empresa" target="_blank" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 10px; font-size: 1.1rem; padding: 15px 30px;">
+                                <i class='bx bx-bot' style="font-size: 1.5rem;"></i> Acceder al Asistente Virtual
+                            </a>
+                        </div>
                     </div>
                 </section>
 
@@ -3474,7 +3775,11 @@
                     </div>
                     <div class="module-card glass-effect mb-3">
                         <h3>🧠 Asistente: Desarrollo Personal y Profesional</h3>
-                        <p style="color:var(--text-secondary); padding: 20px; text-align: center;">Asistente especializado en Desarrollo Personal próximamente disponible.</p>
+                        <div style="text-align: center; padding: 30px;">
+                            <a href="https://chatgpt.com/g/g-6924e8365c5081919c3763099847aec2-asistente-virtual-aitor-dorronsoro" target="_blank" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 10px; font-size: 1.1rem; padding: 15px 30px; background: #8b5cf6;">
+                                <i class='bx bx-bot' style="font-size: 1.5rem;"></i> Acceder al Asistente Virtual
+                            </a>
+                        </div>
                     </div>
                 </section>
 
@@ -3486,7 +3791,11 @@
                     </div>
                     <div class="module-card glass-effect mb-3">
                         <h3>💼 Asistente: Servicios y Adquisición de Clientes</h3>
-                        <p style="color:var(--text-secondary); padding: 20px; text-align: center;">Asistente especializado en Servicios y Clientes próximamente disponible.</p>
+                        <div style="text-align: center; padding: 30px;">
+                            <a href="https://chatgpt.com/g/g-69b20e1245788191b59583ab86e903b6-asistente-virtual-aitor-dorronsoro-clientes" target="_blank" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 10px; font-size: 1.1rem; padding: 15px 30px; background: #10b981;">
+                                <i class='bx bx-bot' style="font-size: 1.5rem;"></i> Acceder al Asistente Virtual
+                            </a>
+                        </div>
                     </div>
                 </section>
 
@@ -3498,7 +3807,11 @@
                     </div>
                     <div class="module-card glass-effect mb-3">
                         <h3>👥 Asistente: Creación de Equipo</h3>
-                        <p style="color:var(--text-secondary); padding: 20px; text-align: center;">Asistente especializado en Creación de Equipo próximamente disponible.</p>
+                        <div style="text-align: center; padding: 30px;">
+                            <a href="https://chatgpt.com/g/g-6925e0a7fc8481918a9dec4cf43bdc82-asistente-ia-aitor-dorronsoro-equipo" target="_blank" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 10px; font-size: 1.1rem; padding: 15px 30px; background: #f59e0b;">
+                                <i class='bx bx-bot' style="font-size: 1.5rem;"></i> Acceder al Asistente Virtual
+                            </a>
+                        </div>
                     </div>
                 </section>
 
@@ -3656,6 +3969,240 @@
                 <img id="image-preview-img" src="" style="max-width: 100%; height: auto; border-radius: 8px;">
             </div>
         </div>
+    </div>
+
+
+
+    <!-- USER PROFILE MODAL -->
+    <div id="user-profile-modal" class="modal-overlay hidden" style="z-index: 100000;">
+        <div class="modal-box glass-effect" style="max-width: 500px; text-align: left;">
+            <div class="modal-header-bar">
+                <h3><i class='bx bx-user-circle'></i> Mi Perfil</h3>
+                <button onclick="document.getElementById('user-profile-modal').classList.add('hidden')" class="btn-icon" style="font-size:1.8rem;"><i class='bx bx-x'></i></button>
+            </div>
+            <div class="modal-body-content" style="padding: 30px;">
+                <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                    <div id="profile-avatar-preview" style="width: 100px; height: 100px; border-radius: 50%; background: var(--primary-blue); color: white; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; cursor: pointer; overflow: hidden; position: relative;" onclick="document.getElementById('profile-avatar-upload').click()">
+                        <span id="profile-avatar-initial">?</span>
+                        <div style="position: absolute; bottom: 0; background: rgba(0,0,0,0.5); width: 100%; text-align: center; padding: 2px; font-size: 0.7rem;"><i class='bx bx-camera'></i></div>
+                        <img id="profile-avatar-img" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                    </div>
+                    <input type="file" id="profile-avatar-upload" style="display: none;" accept="image/*" onchange="previewProfileAvatar(event)">
+                </div>
+                
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom: 5px; color: var(--text-secondary); font-size: 0.9rem;">Nombre y Apellidos</label>
+                    <input type="text" id="profile-name" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+                </div>
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom: 5px; color: var(--text-secondary); font-size: 0.9rem;">Correo Electrónico (Tu ID principal)</label>
+                    <input type="email" id="profile-email" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;" readonly title="El correo no se puede cambiar ya que es tu ID">
+                </div>
+                <div class="input-group" style="margin-bottom: 25px;">
+                    <label style="display:block; margin-bottom: 5px; color: var(--text-secondary); font-size: 0.9rem;">Teléfono de Contacto</label>
+                    <input type="tel" id="profile-phone" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+                </div>
+                
+                <button onclick="saveUserProfile()" class="btn-primary" style="width:100%;">Guardar Perfil <i class='bx bx-save'></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- INBOX MODAL -->
+    <div id="inbox-modal" class="modal-overlay hidden" style="z-index: 100000;">
+        <div class="modal-box glass-effect" style="max-width: 600px; text-align: left;">
+            <div class="modal-header-bar">
+                <h3><i class='bx bx-envelope'></i> Bandeja de Mensajes</h3>
+                <button onclick="document.getElementById('inbox-modal').classList.add('hidden')" class="btn-icon" style="font-size:1.8rem;"><i class='bx bx-x'></i></button>
+            </div>
+            <div id="inbox-messages-container" class="modal-body-content" style="padding: 20px; max-height: 60vh; overflow-y: auto;">
+                <!-- Messages will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="admin-login-modal" class="modal-overlay hidden" style="z-index: 100000;">
+        <div class="modal-box glass-effect" style="max-width: 400px; text-align: center;">
+            <div class="modal-header-bar">
+                <h3>Acceso Administrador</h3>
+                <button onclick="document.getElementById('admin-login-modal').classList.add('hidden')" class="btn-icon" style="font-size:1.8rem;"><i class='bx bx-x'></i></button>
+            </div>
+            <div class="modal-body-content" style="padding: 20px;">
+                <input type="email" id="admin-email" placeholder="Correo electrónico" style="width:100%; margin-bottom: 15px; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+                <input type="password" id="admin-password" placeholder="Contraseña" style="width:100%; margin-bottom: 20px; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+                <button onclick="loginAdmin()" class="btn-primary" style="width:100%;">Entrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD MODAL/FULLSCREEN -->
+    <div id="admin-dashboard-container" class="hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #f4f5f7; z-index: 200000; overflow-y: auto; color: #172b4d;">
+        <div style="background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e1e4e8; position: sticky; top: 0; z-index: 10;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <h2 style="color: #172b4d; margin: 0; font-size: 1.5rem; display: flex; align-items: center; gap: 10px;">
+                    WAKE UP SERVICIOS
+                </h2>
+                <span style="background: #dfe1e6; color: #42526e; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">Owner <i class='bx bx-user'></i> <span id="admin-member-count">0</span></span>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <button onclick="generateReferralLink()" class="btn-secondary" style="background: white; color: #42526e; border: 1px solid #dfe1e6; font-size: 0.9rem; padding: 8px 15px; border-radius: 4px; cursor: pointer;"><i class='bx bx-link'></i> Share Link</button>
+                <button onclick="exportToExcel()" class="btn-secondary" style="background: white; color: #42526e; border: 1px solid #dfe1e6; font-size: 0.9rem; padding: 8px 15px; border-radius: 4px; cursor: pointer;"><i class='bx bx-download'></i> Export Excel</button>
+                <button onclick="document.getElementById('admin-dashboard-container').classList.add('hidden')" class="btn-primary" style="background: #eb5a46; border: none; font-size: 0.9rem; padding: 8px 15px; border-radius: 4px; cursor: pointer; color: white;"><i class='bx bx-x'></i> Cerrar Panel</button>
+            </div>
+        </div>
+        
+        <div style="padding: 30px; max-width: 1400px; margin: 0 auto;">
+            <!-- ADD NEW MEMBER FORM -->
+            <div style="background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; margin-bottom: 20px;">
+                <div style="padding: 20px; border-bottom: 1px solid #e1e4e8;">
+                    <h3 style="margin: 0; color: #172b4d; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;"><i class='bx bx-user-plus' style="color: #0052cc;"></i> Añadir Nuevo Miembro</h3>
+                </div>
+                <div style="padding: 20px;">
+                    <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                        <div style="flex: 2; min-width: 200px;">
+                            <label style="display: block; font-size: 0.8rem; color: #5e6c84; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Correo Electrónico *</label>
+                            <input type="email" id="add-member-email" placeholder="ejemplo@gmail.com" style="width: 100%; padding: 10px 14px; border-radius: 6px; border: 2px solid #dfe1e6; font-size: 0.9rem; background: #fafbfc; font-family: inherit; transition: border-color 0.2s;" onfocus="this.style.borderColor='#0052cc'" onblur="this.style.borderColor='#dfe1e6'">
+                        </div>
+                        <div style="flex: 2; min-width: 200px;">
+                            <label style="display: block; font-size: 0.8rem; color: #5e6c84; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Nombre Completo *</label>
+                            <input type="text" id="add-member-name" placeholder="Nombre y Apellidos" style="width: 100%; padding: 10px 14px; border-radius: 6px; border: 2px solid #dfe1e6; font-size: 0.9rem; background: #fafbfc; font-family: inherit; transition: border-color 0.2s;" onfocus="this.style.borderColor='#0052cc'" onblur="this.style.borderColor='#dfe1e6'">
+                        </div>
+                        <div style="flex: 1.5; min-width: 200px;">
+                            <label style="display: block; font-size: 0.8rem; color: #5e6c84; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Teléfono</label>
+                            <input type="tel" id="add-member-phone" placeholder="+34 600 000 000" style="width: 100%; padding: 10px 14px; border-radius: 6px; border: 2px solid #dfe1e6; font-size: 0.9rem; background: #fafbfc; font-family: inherit; transition: border-color 0.2s;" onfocus="this.style.borderColor='#0052cc'" onblur="this.style.borderColor='#dfe1e6'">
+                        </div>
+                        <div style="flex: 1; min-width: 180px;">
+                            <label style="display: block; font-size: 0.8rem; color: #5e6c84; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Rol</label>
+                            <select id="add-member-role" style="width: 100%; padding: 10px 14px; border-radius: 6px; border: 2px solid #dfe1e6; font-size: 0.9rem; background: #fafbfc; font-family: inherit; cursor: pointer;">
+                                <option value="Can View &amp; Add Members">Can View &amp; Add Members</option>
+                                <option value="Can Edit">Can Edit</option>
+                                <option value="Can View">Can View</option>
+                            </select>
+                        </div>
+                        <div style="min-width: 160px;">
+                            <button onclick="addMemberManually()" style="width: 100%; padding: 10px 20px; background: #0052cc; color: white; border: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;" onmouseover="this.style.background='#0747a6'" onmouseout="this.style.background='#0052cc'">
+                                <i class='bx bx-plus-circle'></i> Añadir Miembro
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden;">
+                <div style="padding: 20px; border-bottom: 1px solid #e1e4e8; display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0; color: #172b4d; font-size: 1.2rem;">Members List</h3>
+                    <div style="position: relative;">
+                        <input type="text" id="admin-search" placeholder="Search for someone on this Board" style="padding: 8px 12px 8px 35px; border-radius: 4px; border: 2px solid #dfe1e6; width: 350px; font-size: 0.9rem; background: #fafbfc;" onkeyup="filterAdminTable()">
+                        <i class='bx bx-search' style="position: absolute; left: 12px; top: 12px; color: #7a869a;"></i>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; color: #172b4d;" id="admin-members-table">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #dfe1e6; color: #5e6c84; font-size: 0.85rem; background: #fafbfc;">
+                                <th style="padding: 15px 20px; font-weight: 600;">Email</th>
+                                <th style="padding: 15px 20px; font-weight: 600;">Name</th>
+                                <th style="padding: 15px 20px; font-weight: 600;">Phone</th>
+                                <th style="padding: 15px 20px; font-weight: 600;">Status</th>
+                                <th style="padding: 15px 20px; font-weight: 600;">Date Added</th>
+                                <th style="padding: 15px 20px; font-weight: 600;">Role</th>
+                                <th style="padding: 15px 20px; font-weight: 600; text-align: right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body">
+                            <!-- JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REGISTRATION SCREEN (REPLACES LOGIN WHEN REF IS PRESENT) -->
+    <div id="register-screen" class="hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 999999; overflow-y: auto;">
+        <!-- Background -->
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #1e3a8a 100%); z-index: 0;"></div>
+        
+        <!-- Main Content -->
+        <div style="position: relative; z-index: 1; display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 30px;">
+            <div style="display: flex; max-width: 1000px; width: 100%; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 80px rgba(0,0,0,0.5); background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08);">
+                
+                <!-- LEFT: Photo + Branding -->
+                <div style="flex: 1; position: relative; min-height: 600px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden;">
+                    <img src="Foto evento 1.jpeg" alt="Aitor Dorronsoro" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 20%;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.4) 50%, transparent 100%);"></div>
+                    <div style="position: relative; padding: 40px 30px; z-index: 2;">
+                        <img src="logo-wakeup-white.png" alt="Wake Up" style="height: 40px; margin-bottom: 20px; opacity: 0.9;">
+                        <h2 style="color: white; font-size: 1.6rem; font-weight: 700; line-height: 1.3; margin-bottom: 12px; font-family: 'Outfit', sans-serif;">Aitor Dorronsoro</h2>
+                        <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; line-height: 1.5; font-family: 'Outfit', sans-serif;">Mentor y Empresario en Wake Up Servicios</p>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Registration Form -->
+                <div style="flex: 1; padding: 50px 40px; display: flex; flex-direction: column; justify-content: center; background: rgba(255,255,255,0.97);">
+                    <div style="margin-bottom: 30px;">
+                        <div style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #e0e7ff, #dbeafe); padding: 6px 14px; border-radius: 50px; margin-bottom: 20px;">
+                            <i class='bx bx-shield-quarter' style="color: #1e3a8a; font-size: 1rem;"></i>
+                            <span style="color: #1e3a8a; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Acceso Exclusivo</span>
+                        </div>
+                        <h1 style="color: #0f172a; font-size: 1.8rem; font-weight: 800; margin-bottom: 16px; line-height: 1.2; font-family: 'Outfit', sans-serif;">¡Bienvenido a mi sistema personal!</h1>
+                        <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; font-family: 'Outfit', sans-serif;">¡Bienvenido a mi sistema personal de registro! Soy Aitor Dorronsoro, mentor y empresario en Wake Up. Regístrate a continuación para poder tener acceso a la plataforma formativa completa. ¡Un placer y nos vemos dentro!</p>
+                    </div>
+
+                    <form id="register-form" style="display: flex; flex-direction: column; gap: 16px;">
+                        <div>
+                            <label style="display: block; color: #334155; font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Nombre y Apellidos *</label>
+                            <div style="position: relative;">
+                                <i class='bx bx-user' style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1.2rem;"></i>
+                                <input type="text" id="reg-name" placeholder="Tu nombre completo" required style="width: 100%; padding: 13px 14px 13px 44px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; font-family: 'Outfit', sans-serif; background: #f8fafc; transition: all 0.2s; outline: none;" onfocus="this.style.borderColor='#3b82f6'; this.style.background='white'; this.style.boxShadow='0 0 0 4px rgba(59,130,246,0.1)'" onblur="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc'; this.style.boxShadow='none'">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style="display: block; color: #334155; font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Correo Electrónico *</label>
+                            <div style="position: relative;">
+                                <i class='bx bx-envelope' style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1.2rem;"></i>
+                                <input type="email" id="reg-email" placeholder="tucorreo@ejemplo.com" required style="width: 100%; padding: 13px 14px 13px 44px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; font-family: 'Outfit', sans-serif; background: #f8fafc; transition: all 0.2s; outline: none;" onfocus="this.style.borderColor='#3b82f6'; this.style.background='white'; this.style.boxShadow='0 0 0 4px rgba(59,130,246,0.1)'" onblur="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc'; this.style.boxShadow='none'">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style="display: block; color: #334155; font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Teléfono de Contacto *</label>
+                            <div style="position: relative;">
+                                <i class='bx bx-phone' style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1.2rem;"></i>
+                                <input type="tel" id="reg-phone" placeholder="+34 600 000 000" required style="width: 100%; padding: 13px 14px 13px 44px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; font-family: 'Outfit', sans-serif; background: #f8fafc; transition: all 0.2s; outline: none;" onfocus="this.style.borderColor='#3b82f6'; this.style.background='white'; this.style.boxShadow='0 0 0 4px rgba(59,130,246,0.1)'" onblur="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc'; this.style.boxShadow='none'">
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="submitRegistration()" style="width: 100%; padding: 14px 24px; background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: 'Outfit', sans-serif; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s; margin-top: 8px; box-shadow: 0 4px 15px rgba(59,130,246,0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(59,130,246,0.4)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(59,130,246,0.3)'">
+                            <i class='bx bx-send' style="font-size: 1.2rem;"></i> Enviar Solicitud de Acceso
+                        </button>
+
+                        <div style="text-align: center; margin-top: 10px;">
+                            <a href="#" onclick="window.location.href=window.location.pathname" style="color: #64748b; font-size: 0.85rem; text-decoration: none; font-family: 'Outfit', sans-serif; transition: color 0.2s;" onmouseover="this.style.color='#1e3a8a'" onmouseout="this.style.color='#64748b'">
+                                <i class='bx bx-log-in'></i> Ya tengo cuenta — <strong>Iniciar sesión</strong>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile responsive override (CSS in style tag) -->
+        <style>
+            @media (max-width: 768px) {
+                #register-screen > div:nth-child(2) > div {
+                    flex-direction: column !important;
+                }
+                #register-screen > div:nth-child(2) > div > div:first-child {
+                    min-height: 250px !important;
+                }
+                #register-screen > div:nth-child(2) > div > div:last-child {
+                    padding: 30px 24px !important;
+                }
+            }
+        </style>
     </div>
 
     <script src="app.js"></script>

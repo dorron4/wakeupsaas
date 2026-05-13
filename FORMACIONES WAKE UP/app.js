@@ -195,13 +195,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatBody = document.querySelector('.chatbot-body');
 
     // --- LÓGICA DE LOGIN ---
+    const VALID_USER = 'Dorronthewolf';
+    const VALID_PASS = 'SistemapersonalDorron2026@';
+
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const username = document.getElementById('username').value;
+        const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
 
-        // Simulación de validación (acepta cualquier cosa para demo)
-        if (username.length > 2 && password.length > 2) {
+        if (username === VALID_USER && password === VALID_PASS) {
             // Animación de salida del login
             loginScreen.style.opacity = '0';
             loginScreen.style.transition = 'opacity 0.5s ease';
@@ -209,35 +211,98 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 loginScreen.classList.add('hidden');
                 appScreen.classList.remove('hidden');
-                displayUsername.textContent = username;
+                displayUsername.textContent = 'Distribuidor';
+                restoreSavedProfile();
             }, 500);
         } else {
-            alert("Por favor, introduce usuario y contraseña válidos.");
+            alert("Credenciales incorrectas. Verifica tu ID y contraseña.");
         }
     });
 
-    // --- LÓGICA DE LOGIN CON GOOGLE ---
+    // --- BOTÓN DE GOOGLE (verificación de email en BBDD) ---
     if (googleLoginBtn) {
+        const googleEmailContainer = document.getElementById('google-email-container');
+        const googleEmailInput = document.getElementById('google-email-input');
+        const googleEmailSubmit = document.getElementById('google-email-submit');
+        const googleEmailCancel = document.getElementById('google-email-cancel');
+
         googleLoginBtn.addEventListener('click', () => {
-            // Simular proceso de OAuth con Google y verificación de autorización
-            const simularCorreo = prompt("Simulador de Google: Introduce tu cuenta de correo de Google autorizada (ejemplo@gmail.com):", "distribuidor@gmail.com");
-            
-            if (simularCorreo && simularCorreo.includes('@')) {
-                // Animación de salida del login
+            // Mostrar campo de email y ocultar botón de Google
+            if (googleEmailContainer) {
+                googleEmailContainer.classList.remove('hidden');
+                googleLoginBtn.classList.add('hidden');
+                if (googleEmailInput) googleEmailInput.focus();
+            }
+        });
+
+        if (googleEmailCancel) {
+            googleEmailCancel.addEventListener('click', () => {
+                googleEmailContainer.classList.add('hidden');
+                googleLoginBtn.classList.remove('hidden');
+                if (googleEmailInput) googleEmailInput.value = '';
+            });
+        }
+
+        if (googleEmailSubmit) {
+            googleEmailSubmit.addEventListener('click', () => {
+                const email = googleEmailInput ? googleEmailInput.value.trim().toLowerCase() : '';
+                if (!email || !email.includes('@')) {
+                    alert('Por favor, introduce un correo electrónico válido.');
+                    return;
+                }
+
+                // Buscar en admin_members (localStorage o API)
+                let members = [];
+                try {
+                    const loc = localStorage.getItem('admin_members');
+                    if (loc) members = JSON.parse(loc);
+                } catch(e) {}
+
+                const member = members.find(m => m.email.toLowerCase() === email);
+
+                if (!member) {
+                    alert('Este correo no está registrado. Solicita acceso primero usando el enlace de registro.');
+                    return;
+                }
+
+                if (member.status !== 'JOINED') {
+                    alert('Tu solicitud aún no ha sido aprobada por el administrador. Estado actual: ' + member.status);
+                    return;
+                }
+
+                // Acceso concedido
                 loginScreen.style.opacity = '0';
                 loginScreen.style.transition = 'opacity 0.5s ease';
                 
                 setTimeout(() => {
                     loginScreen.classList.add('hidden');
                     appScreen.classList.remove('hidden');
-                    if (mainChatbotWidget) mainChatbotWidget.classList.remove('hidden');
-                    displayUsername.textContent = simularCorreo.split('@')[0]; // Usa el nombre del correo
+                    displayUsername.textContent = member.name ? member.name.split(' ')[0] : 'Distribuidor';
+                    localStorage.setItem('user_email', email);
+                    restoreSavedProfile();
                 }, 500);
-            } else if (simularCorreo) {
-                alert("La cuenta de Google introducida no está registrada en el sistema.");
-            }
-        });
+            });
+        }
     }
+
+    // --- FUNCIÓN PARA MOSTRAR ENLACE DE REFERIDO ---
+    window.showReferralInfo = function() {
+        const box = document.getElementById('referral-info-box');
+        const linkDisplay = document.getElementById('referral-link-display');
+        const btnSolicitar = document.getElementById('btn-solicitar-acceso');
+        if (box && linkDisplay) {
+            const link = window.location.origin + window.location.pathname + '?ref=aitor';
+            linkDisplay.value = link;
+            box.classList.toggle('hidden');
+            if (btnSolicitar) {
+                if (!box.classList.contains('hidden')) {
+                    btnSolicitar.innerHTML = "<i class='bx bx-x' style='color: #3b82f6;'></i> Ocultar";
+                } else {
+                    btnSolicitar.innerHTML = "<i class='bx bx-user-plus' style='color: #3b82f6;'></i> Solicitar Acceso";
+                }
+            }
+        }
+    };
 
     // Logout
     logoutBtn.addEventListener('click', () => {
@@ -357,14 +422,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- LÓGICA DEL CHATBOT ---
     function toggleChatbot() {
-        chatbotPanel.classList.toggle('hidden');
+        if (chatbotPanel) chatbotPanel.classList.toggle('hidden');
     }
 
-    chatbotToggle.addEventListener('click', toggleChatbot);
-    chatbotClose.addEventListener('click', toggleChatbot);
+    if (chatbotToggle) chatbotToggle.addEventListener('click', toggleChatbot);
+    if (chatbotClose) chatbotClose.addEventListener('click', toggleChatbot);
 
     // Enviar mensaje en el chat
     function sendMessage() {
+        if (!chatInput || !chatBody) return;
         const text = chatInput.value.trim();
         if (text === '') return;
 
@@ -387,8 +453,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
 
-    chatSendBtn.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keypress', (e) => {
+    if (chatSendBtn) chatSendBtn.addEventListener('click', sendMessage);
+    if (chatInput) chatInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             sendMessage();
         }
@@ -2407,6 +2473,23 @@ document.addEventListener('DOMContentLoaded', () => {
         linkStripe: 'https://buy.stripe.com/tu_enlace_aqui' // <-- CAMBIA ESTE LINK
     };
 
+    /* ==========================================================
+       USER PROFILE & INBOX LOGIC
+       ========================================================== */
+    function restoreSavedProfile() {
+        const saved = localStorage.getItem('user_profile');
+        if(saved) {
+            const p = JSON.parse(saved);
+            if(p.name) {
+                const displayEl = document.getElementById('display-username');
+                if(displayEl) displayEl.textContent = p.name.split(' ')[0];
+            }
+            if(p.avatar && !p.avatar.endsWith('/')) {
+                updateSidebarAvatar(p.avatar);
+            }
+        }
+    }
+
     function initCrowdfunding() {
         const totalMensual = CROWDFUNDING_CONFIG.mtoProfesional + CROWDFUNDING_CONFIG.costesWeb;
         const metaAnual = totalMensual * 12;
@@ -2433,3 +2516,455 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
+
+/* ==========================================================
+   ADMIN PANEL LOGIC
+   ========================================================== */
+let adminMembers = [];
+
+function openAdminLogin() {
+    document.getElementById('admin-login-modal').classList.remove('hidden');
+}
+
+function loginAdmin() {
+    const email = document.getElementById('admin-email').value;
+    const pwd = document.getElementById('admin-password').value;
+    if(email === 'aitordorronsoro@gmail.com' && pwd === 'Megustaelchocolate6@') {
+        document.getElementById('admin-login-modal').classList.add('hidden');
+        document.getElementById('admin-dashboard-container').classList.remove('hidden');
+        loadAdminData();
+    } else {
+        alert('Credenciales incorrectas.');
+    }
+}
+
+async function loadAdminData() {
+    try {
+        const res = await fetch('api.php');
+        if(res.ok) {
+            adminMembers = await res.json();
+        } else {
+            throw new Error('Fallback to local');
+        }
+    } catch(e) {
+        console.warn('Usando localStorage como fallback', e);
+        const local = localStorage.getItem('admin_members');
+        if(local) {
+            adminMembers = JSON.parse(local);
+        } else {
+            adminMembers = [
+                {email: "kaimartinez48@gmail.com", name: "Kai Martinez", status: "JOINED", dateAdded: "11/05/2026", role: "Can View & Add Members"},
+                {email: "fernando.ramirezhernando@hotmail.com", name: "Fernando Ramirez", status: "INVITED", dateAdded: "05/05/2026", role: "Can View & Add Members"}
+            ];
+        }
+    }
+    renderAdminTable();
+}
+
+async function saveAdminData() {
+    try {
+        const res = await fetch('api.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({action: 'save', members: adminMembers})
+        });
+        if(!res.ok) throw new Error('API Fail');
+    } catch(e) {
+        localStorage.setItem('admin_members', JSON.stringify(adminMembers));
+    }
+    renderAdminTable();
+}
+
+function renderAdminTable(filterText = '') {
+    const tbody = document.getElementById('admin-table-body');
+    const countSpan = document.getElementById('admin-member-count');
+    tbody.innerHTML = '';
+    
+    let filtered = adminMembers;
+    if(filterText) {
+        const text = filterText.toLowerCase();
+        filtered = adminMembers.filter(m => (m.name && m.name.toLowerCase().includes(text)) || m.email.toLowerCase().includes(text));
+    }
+    
+    countSpan.textContent = filtered.length;
+
+    filtered.forEach((m, index) => {
+        // Status Badge Style
+        let statusStyle = 'background: #e3fcef; color: #006644;'; // JOINED green
+        if(m.status === 'INVITED' || m.status === 'PENDING') {
+            statusStyle = 'background: #fffae6; color: #ff8b00;'; // orange
+        }
+        if(m.status === 'DENIED') {
+            statusStyle = 'background: #ffebe6; color: #bf2600;'; // red
+        }
+
+        const initial = m.name ? m.name.charAt(0).toUpperCase() : '?';
+        const avatarColor = 'hsl(' + (m.email.length * 20 % 360) + ', 70%, 60%)';
+
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid #dfe1e6';
+        tr.innerHTML = `
+            <td style="padding: 15px 20px; display: flex; align-items: center; gap: 15px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: ${avatarColor}; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem;">${initial}</div>
+                <span style="font-weight: 500;">${m.email}</span>
+            </td>
+            <td style="padding: 15px 20px; color: #5e6c84;">${m.name || 'N/A'}</td>
+            <td style="padding: 15px 20px; color: #5e6c84; font-size: 0.85rem;">${m.phone || '—'}</td>
+            <td style="padding: 15px 20px;">
+                <span style="${statusStyle} padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block;">${m.status}</span>
+            </td>
+            <td style="padding: 15px 20px; color: #5e6c84;">${m.dateAdded}</td>
+            <td style="padding: 15px 20px;">
+                <select onchange="changeRole(${index}, this.value)" style="background: #fafbfc; border: 1px solid #dfe1e6; border-radius: 4px; padding: 6px 12px; color: #172b4d; font-size: 0.85rem; font-family: inherit; font-weight: 500; cursor: pointer; appearance: none; -webkit-appearance: none; padding-right: 25px; background-image: url('data:image/svg+xml;utf8,<svg fill=%22%235e6c84%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/><path d=%22M0 0h24v24H0z%22 fill=%22none%22/></svg>'); background-repeat: no-repeat; background-position-x: 100%; background-position-y: 50%;">
+                    <option value="Can View & Add Members" ${m.role === 'Can View & Add Members' ? 'selected' : ''}>Can View & Add Members</option>
+                    <option value="Can Edit" ${m.role === 'Can Edit' ? 'selected' : ''}>Can Edit</option>
+                    <option value="Can View" ${m.role === 'Can View' ? 'selected' : ''}>Can View</option>
+                </select>
+            </td>
+            <td style="padding: 15px 20px; text-align: right; white-space: nowrap;">
+                ${m.status === 'PENDING' ? `<button onclick="acceptMember(${index})" style="background:#0052cc; color:white; border:none; border-radius:4px; padding:6px 12px; cursor:pointer; font-size:0.85rem; margin-right:5px;"><i class='bx bx-check'></i> Aceptar</button><button onclick="denyMember(${index})" style="background:#eb5a46; color:white; border:none; border-radius:4px; padding:6px 12px; cursor:pointer; font-size:0.85rem; margin-right:5px;"><i class='bx bx-x'></i> Denegar</button>` : ``}
+                <button onclick="leaveMessage('${m.email}')" style="background:transparent; color:#5e6c84; border:none; cursor:pointer; font-size:1.2rem; margin-right: 10px;"><i class='bx bx-message-square-detail'></i></button>
+                <button onclick="deleteMember(${index})" style="background:transparent; color:#eb5a46; border:none; cursor:pointer; font-size:1.2rem;"><i class='bx bx-trash'></i></button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function filterAdminTable() {
+    renderAdminTable(document.getElementById('admin-search').value);
+}
+
+function changeRole(index, newRole) {
+    adminMembers[index].role = newRole;
+    saveAdminData();
+}
+
+function deleteMember(index) {
+    if(confirm('¿Seguro que quieres eliminar a ' + adminMembers[index].email + '?')) {
+        adminMembers.splice(index, 1);
+        saveAdminData();
+    }
+}
+
+function acceptMember(index) {
+    adminMembers[index].status = 'JOINED';
+    saveAdminData();
+    alert('✅ ' + adminMembers[index].name + ' ha sido aceptado y ahora tiene acceso.');
+}
+
+function denyMember(index) {
+    if(confirm('¿Seguro que quieres denegar el acceso a ' + adminMembers[index].name + '?')) {
+        adminMembers[index].status = 'DENIED';
+        saveAdminData();
+        alert('❌ ' + adminMembers[index].name + ' ha sido denegado.');
+    }
+}
+
+function addMemberManually() {
+    const emailInput = document.getElementById('add-member-email');
+    const nameInput = document.getElementById('add-member-name');
+    const phoneInput = document.getElementById('add-member-phone');
+    const roleSelect = document.getElementById('add-member-role');
+    
+    const email = emailInput.value.trim();
+    const name = nameInput.value.trim();
+    const phone = phoneInput ? phoneInput.value.trim() : '';
+    const role = roleSelect.value;
+    
+    if(!email || !email.includes('@')) {
+        alert('Por favor, introduce un correo electrónico válido.');
+        emailInput.focus();
+        return;
+    }
+    if(!name) {
+        alert('Por favor, introduce el nombre completo.');
+        nameInput.focus();
+        return;
+    }
+    
+    // Check if email already exists
+    const exists = adminMembers.find(m => m.email.toLowerCase() === email.toLowerCase());
+    if(exists) {
+        alert('Este correo electrónico ya está registrado en la lista.');
+        return;
+    }
+    
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit', year: 'numeric'}).replace(/\//g, '/');
+    
+    adminMembers.push({
+        email: email,
+        name: name,
+        phone: phone,
+        status: 'JOINED',
+        dateAdded: dateStr,
+        role: role
+    });
+    
+    saveAdminData();
+    
+    // Clear form
+    emailInput.value = '';
+    nameInput.value = '';
+    if(phoneInput) phoneInput.value = '';
+    roleSelect.selectedIndex = 0;
+    
+    alert('✅ ' + name + ' ha sido añadido correctamente al portal.');
+}
+
+function generateReferralLink() {
+    const link = window.location.origin + window.location.pathname + '?ref=aitor';
+    navigator.clipboard.writeText(link).then(() => {
+        alert('Enlace de referido copiado al portapapeles: ' + link);
+    });
+}
+
+function exportToExcel() {
+    let csv = 'Email,Name,Phone,Status,Date Added,Role\n';
+    adminMembers.forEach(m => {
+        csv += `"${m.email}","${m.name}","${m.phone || ''}","${m.status}","${m.dateAdded}","${m.role}"\n`;
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.setAttribute('download', 'miembros_wakeup.csv');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+// CHECK URL PARAMETERS FOR REFERRAL
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.get('ref')) {
+        // Show register instead of login
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('register-screen').classList.remove('hidden');
+    }
+});
+
+async function submitRegistration() {
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const phone = document.getElementById('reg-phone').value.trim();
+    
+    if(!name || !email || !phone) {
+        alert('Por favor, rellena todos los campos obligatorios.');
+        return;
+    }
+    if(!email.includes('@')) {
+        alert('Por favor, introduce un correo electrónico válido.');
+        return;
+    }
+
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    const dateStr = dd + '/' + mm + '/' + yyyy;
+
+    const newMember = {
+        email: email,
+        name: name,
+        phone: phone,
+        status: "PENDING",
+        dateAdded: dateStr,
+        role: "Can View"
+    };
+    
+    // Attempt to save to API
+    try {
+        let members = [];
+        const res = await fetch('api.php');
+        if(res.ok) members = await res.json();
+        else {
+            const loc = localStorage.getItem('admin_members');
+            if(loc) members = JSON.parse(loc);
+        }
+        
+        // Check duplicate
+        if(members.find(m => m.email.toLowerCase() === email.toLowerCase())) {
+            alert('Este correo ya está registrado. Si ya solicitaste acceso, espera la confirmación del administrador.');
+            return;
+        }
+
+        members.push(newMember);
+        
+        const saveRes = await fetch('api.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({action: 'save', members: members})
+        });
+        if(!saveRes.ok) throw new Error('API Fail');
+    } catch(e) {
+        // Fallback local
+        const loc = localStorage.getItem('admin_members');
+        let members = loc ? JSON.parse(loc) : [];
+        
+        if(members.find(m => m.email.toLowerCase() === email.toLowerCase())) {
+            alert('Este correo ya está registrado. Si ya solicitaste acceso, espera la confirmación del administrador.');
+            return;
+        }
+
+        members.push(newMember);
+        localStorage.setItem('admin_members', JSON.stringify(members));
+    }
+    
+    // Show success message
+    const formContainer = document.getElementById('register-form');
+    formContainer.innerHTML = `
+        <div style="text-align: center; padding: 20px 0;">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #e0e7ff, #dbeafe); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <i class='bx bx-check' style="font-size: 3rem; color: #1e3a8a;"></i>
+            </div>
+            <h2 style="color: #0f172a; font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; font-family: 'Outfit', sans-serif;">¡Solicitud Enviada!</h2>
+            <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; font-family: 'Outfit', sans-serif; margin-bottom: 20px;">Tu solicitud ha sido recibida correctamente. El administrador revisará tus datos y te confirmará el acceso en breve. ¡Gracias por tu interés, ${name.split(' ')[0]}!</p>
+            <a href="${window.location.pathname}" style="display: inline-flex; align-items: center; gap: 8px; color: #1e3a8a; font-weight: 600; text-decoration: none; font-size: 0.9rem; font-family: 'Outfit', sans-serif;"><i class='bx bx-log-in'></i> Ir al Inicio de Sesión</a>
+        </div>
+    `;
+}
+
+
+/* ==========================================================
+   USER PROFILE & INBOX LOGIC
+   ========================================================== */
+function openUserProfile() {
+    document.getElementById('user-profile-modal').classList.remove('hidden');
+    const saved = localStorage.getItem('user_profile');
+    const email = localStorage.getItem('user_email') || document.getElementById('display-username').textContent + '@gmail.com';
+    
+    document.getElementById('profile-email').value = email;
+    
+    if(saved) {
+        const p = JSON.parse(saved);
+        if(p.name) document.getElementById('profile-name').value = p.name;
+        if(p.phone) document.getElementById('profile-phone').value = p.phone;
+        if(p.avatar) {
+            document.getElementById('profile-avatar-img').src = p.avatar;
+            document.getElementById('profile-avatar-img').style.display = 'block';
+            document.getElementById('profile-avatar-initial').style.display = 'none';
+        }
+    }
+}
+
+function previewProfileAvatar(event) {
+    const file = event.target.files[0];
+    if(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('profile-avatar-img').src = e.target.result;
+            document.getElementById('profile-avatar-img').style.display = 'block';
+            document.getElementById('profile-avatar-initial').style.display = 'none';
+            // Also preview in sidebar immediately
+            updateSidebarAvatar(e.target.result);
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+function updateSidebarAvatar(avatarSrc) {
+    const sidebarImg = document.getElementById('sidebar-avatar-img');
+    const sidebarIcon = document.getElementById('sidebar-avatar-icon');
+    if(sidebarImg && avatarSrc && !avatarSrc.endsWith('/')) {
+        sidebarImg.src = avatarSrc;
+        sidebarImg.style.display = 'block';
+        if(sidebarIcon) sidebarIcon.style.display = 'none';
+    }
+}
+
+function saveUserProfile() {
+    const p = {
+        name: document.getElementById('profile-name').value,
+        email: document.getElementById('profile-email').value,
+        phone: document.getElementById('profile-phone').value,
+        avatar: document.getElementById('profile-avatar-img').src
+    };
+    localStorage.setItem('user_profile', JSON.stringify(p));
+    
+    if(p.name) {
+        document.getElementById('display-username').textContent = p.name.split(' ')[0];
+    }
+    
+    // Update sidebar avatar with profile photo
+    updateSidebarAvatar(p.avatar);
+    
+    alert('Perfil guardado correctamente');
+    document.getElementById('user-profile-modal').classList.add('hidden');
+}
+
+function openInbox() {
+    document.getElementById('inbox-modal').classList.remove('hidden');
+    const container = document.getElementById('inbox-messages-container');
+    container.innerHTML = '';
+    
+    const email = document.getElementById('profile-email') ? document.getElementById('profile-email').value : document.getElementById('display-username').textContent + '@gmail.com';
+    
+    const localMsgs = localStorage.getItem('user_messages_' + email);
+    let msgs = localMsgs ? JSON.parse(localMsgs) : [];
+    
+    if(msgs.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#5e6c84;">No tienes mensajes nuevos.</p>';
+        return;
+    }
+    
+    msgs.forEach((m, idx) => {
+        container.innerHTML += `
+            <div style="background: #fafbfc; border: 1px solid #dfe1e6; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <span style="font-weight:bold; color:var(--primary-blue);"><i class='bx bxs-user-badge'></i> Administrador</span>
+                    <span style="font-size:0.8rem; color:#5e6c84;">${m.date}</span>
+                </div>
+                <p style="margin:0; color:#172b4d;">${m.text}</p>
+                <button onclick="deleteMessage('${email}', ${idx})" style="margin-top:10px; background:transparent; color:#eb5a46; border:none; cursor:pointer; font-size:0.85rem;"><i class='bx bx-trash'></i> Borrar</button>
+            </div>
+        `;
+    });
+}
+
+function deleteMessage(email, idx) {
+    const localMsgs = localStorage.getItem('user_messages_' + email);
+    let msgs = localMsgs ? JSON.parse(localMsgs) : [];
+    msgs.splice(idx, 1);
+    localStorage.setItem('user_messages_' + email, JSON.stringify(msgs));
+    openInbox();
+    checkInboxBadge();
+}
+
+function checkInboxBadge() {
+    const email = document.getElementById('profile-email') ? document.getElementById('profile-email').value : document.getElementById('display-username').textContent + '@gmail.com';
+    const localMsgs = localStorage.getItem('user_messages_' + email);
+    let msgs = localMsgs ? JSON.parse(localMsgs) : [];
+    
+    const badge = document.getElementById('inbox-badge');
+    if(badge) {
+        if(msgs.length > 0) {
+            badge.textContent = msgs.length;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+}
+
+// Modify leaveMessage to save it so the user can read it
+function leaveMessage(email) {
+    const msg = prompt('Dejar mensaje en el tablón para ' + email + ':');
+    if(msg) {
+        const localMsgs = localStorage.getItem('user_messages_' + email);
+        let msgs = localMsgs ? JSON.parse(localMsgs) : [];
+        const today = new Date();
+        msgs.push({
+            date: today.toLocaleDateString(),
+            text: msg
+        });
+        localStorage.setItem('user_messages_' + email, JSON.stringify(msgs));
+        alert('Mensaje enviado a ' + email);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(checkInboxBadge, 1000);
+});
